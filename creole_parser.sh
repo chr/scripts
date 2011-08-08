@@ -8,14 +8,24 @@
 
 # XXX by default the first line is the <h1> title, but I'll change that ASAP.
 
+# TODO
+# * Titles with leading blank space isn't parsed.
+# * Paragraphs show not remove the white space between paragraphs
+#   (for readability of the generated HTML).
+# * Underlined text isn't regonised.
+# * Break lines (\\) aren't recognised.
+# * Second or more levels in lists aren't recognised.
+# * <hr>s are inside <p>s.
+# * Markup inside <h#>s is parsed, though this is optional.
+
+
 creole_to_html() {
 range=alnum
 # XXX awk is nawk
 sed 's/&/\&amp;/g;s/</\&lt;/g;s/>/\&gt;/g;s@\\\\$@<br />@' $1 |\
 awk -v nl='\n' -v inside=0 -v list=0 -v el=p -v pre=0 '
 /^{{{$/,/^}}}$/ { print; pre=1; next; }
-(NR==1) { print "<h1>"$0"</h1>"; next }
-/^==/ { match($0,"^=*"); hnum=RLENGTH; match($0,"=*$");
+/^=/ { match($0,"^=*"); hnum=RLENGTH; match($0,"=*$");
     print "<h"hnum">"substr($0,hnum+1,RSTART-hnum-1)"</h"hnum">";
     next;
 }
@@ -40,7 +50,7 @@ sed "/^{{{$/,/^}}}$/ ! {s@^//@ //@;
   s@\*\*\([[:$range:]]\)@<strong>\1@g;s@\([[:$range:]]\)\*\*@\1</strong>@g;
   s@ //\([[:$range:]]\)@ <em>\1@g;s@\([[:$range:]]\)//@\1</em>@g;
   s@##\([[:$range:]]\)@<tt>\1@g;s@\([[:$range:]]\)##@\1</tt>@g
-  }" | sed 's@^{{{$@<pre>@;s@^}}}$@</pre>@;s@^-----*$@<hr />@' |\
+  }" | sed 's@^{{{$@<pre>@;s@^}}}$@</pre>@;s@^[[:space:]]*----[- ]*$@<hr />@' |\
 sed 's@\([hfg][[:alpha:]]*://[^ |<>]*[a-zA-Z0-9/]\)@<a href="\1">\1</a>@g' |\
 sed 's@\[\[\(<a href="[^ ]*">\)[^ ]*\(</a>\)|\([^[]*\)\]\]@\1\3\2@g'
 }
