@@ -18,6 +18,7 @@
 
 usage() {
 	echo usage: $(basename $0) FILE
+	exit 1
 }
 
 creole_to_html() {
