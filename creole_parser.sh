@@ -34,6 +34,7 @@ awk -v nl='\n' -v inside=0 -v list=0 -v el=p -v pre=0 '
     next;
 }
 
+################################ Lists ########################################
 # XXX Not XTHML
 /^[#*] /,/^$/ {
 while ( $0 !~ /^$/ ) {
@@ -43,7 +44,7 @@ while ( $0 !~ /^$/ ) {
 		} else {
 			list = "ul"
 		}
-		print "<"list">"
+		print "\n<"list">"
 		level = 1
 	}
 	inside_li = 1
@@ -60,7 +61,23 @@ print "</"list">"
 inside_li = 0
 }
 
-{   pre=0; line=$0;
+################################ Tables ########################################
+# Thanks to Magnus for suggesting split()
+/^\|/,/^$/ {
+	if (inside_t==0) { print "<table>" ; inside_t=1 }
+
+	if ($0~/^$/) { print "</table>"; inside_t=0 }
+	else {
+		print "<tr>"
+		k=split($0, a, "|")
+		for (i=2;i<k;i++) {
+			print "<td>" a[i] "</td>"
+		}
+		print "</tr>"
+	}
+}
+
+/^[^\|]/,/^$/ {   pre=0; line=$0;
     while (NF!=0) {
         if (inside==0) { inside=1; print "\n<"el">"; }
         print line;
