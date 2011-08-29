@@ -1,1 +1,10 @@
-Random scripts.
+RANDOM SCRIPTS.  PUBLIC DOMAIN.  BE CAREFUL.
+
+save_html_page.sh
+  Save an HTML page with local <img>s and <link>s.
+
+creole_parser.sh
+  Parse a file with creole markup and convert to HTML.
+
+squeeze_blanks.sh
+  Similar to GNU cat -s.
